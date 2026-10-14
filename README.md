@@ -16,6 +16,9 @@ Use the hosted server at:
 https://mcp.gtmeditor.com
 ```
 
+> [!NOTE]  
+> The hosted instance at https://mcp.gtmeditor.com will be shut-down on 2026-11-30. See [#139](https://github.com/paolobietolini/gtm-mcp-server/issues/139) for more details.
+
 The server supports browser-based Google OAuth for individual users and
 service-account authentication for self-hosted automation.
 
@@ -32,18 +35,11 @@ service-account authentication for self-hosted automation.
 | Product parity target | 101 of 106 methods, reached |
 | Hosted endpoint | `https://mcp.gtmeditor.com` |
 
-The agreed API parity scope is complete. The project implements 101 methods
-from Google's 106-method GTM v2 discovery surface. The five
-`accounts.user_permissions` methods are intentionally excluded because granting
-and revoking GTM access needs a separate privilege-management design.
-
-Tool count and API-method count are different. Some tools provide local
-guidance, while some helpers cover more than one Google API call.
+The project implements 101 methods from Google's 106-method GTM v2 discovery surface. The five `accounts.user_permissions` methods are intentionally excluded because granting and revoking GTM access are security-related and it shouldn't be manager by an LLM.
 
 ## Connect an MCP client
 
-Add the hosted URL as a remote HTTP MCP server. The client should discover the
-OAuth metadata, open Google sign-in, and reconnect with the issued bearer
+Add the hosted URL as a remote HTTP MCP server. The client should discover the OAuth metadata, open Google sign-in, and reconnect with the issued bearer
 token.
 
 ### Claude Code
@@ -337,8 +333,7 @@ when the entity does not exist in the latest container version.
 - `create_version` first checks that the workspace has changes and no merge
   conflicts.
 - Read tools distinguish latest saved state from published live state.
-- Google API errors are mapped to clearer not-found, permission, conflict, and
-  rate-limit failures. Retryable API failures use bounded backoff.
+- Google API errors are mapped to clearer not-found, permission, conflict, and rate-limit failures. Retryable API failures use bounded backoff.
 - MCP request bodies are limited to 5 MiB. OAuth and dynamic registration
   endpoints have stricter rate and body limits.
 
@@ -375,8 +370,7 @@ consent, server-side containers, and detailed tool input formats.
 | `best_practices_review` | Score a workspace against embedded guidance |
 | `plan_safe_edit` | Produce a staged edit/version/publish plan |
 
-Prompts prepare context and instructions for the model. They do not bypass tool
-authentication or mutation safeguards.
+Prompts prepare context and instructions for the model. They do not bypass tool authentication or mutation safeguards.
 
 ## Authentication
 
@@ -388,8 +382,7 @@ authorization-server metadata, and protected-resource metadata.
 
 The server never receives a Google password. It receives Google OAuth tokens
 after consent. A self-hosted operator can keep issued MCP and Google tokens
-across restarts by setting `TOKEN_STORE_PATH`; without that setting they remain
-in memory and disappear when the process stops.
+across restarts by setting `TOKEN_STORE_PATH`; without that setting they remain in memory and disappear when the process stops.
 
 Expired MCP access tokens can be renewed transparently while their Google
 refresh credentials remain valid. `AUTH_AUTO_REFRESH_MAX_AGE` limits how long
@@ -410,8 +403,7 @@ granted to the configured Google service account.
    `Authorization: Bearer <SERVICE_ACCOUNT_API_KEY>`.
 
 OAuth and service-account mode can run together. Requests with the configured
-API key use the service account; OAuth users keep their own Google identity and
-GTM permissions.
+API key use the service account; OAuth users keep their own Google identity and GTM permissions.
 
 ## Self-hosting
 
@@ -500,8 +492,7 @@ multiple proxy hops, configure and test the trust boundary before relying on
 per-client rate limits.
 
 `ALLOWED_HOSTS` is a comma-separated allowlist used when the same server is
-reached through trusted internal Docker hostnames. Do not add arbitrary public
-hosts.
+reached through trusted internal Docker hostnames. Do not add arbitrary public hosts.
 
 `GTM_TOOL_GROUPS` controls schema size for clients that need only part of the
 API. Available groups are `accounts`, `workspaces`, `tags`, `triggers`,
@@ -520,18 +511,13 @@ The two connection utility tools remain available regardless of this setting.
 ### Optional setup dashboard
 
 Set `DASHBOARD_ENABLED=true` and restart the server to expose `/dashboard/`.
-The page shows the canonical MCP endpoint, server version, authentication setup
-status, and connection instructions. It is disabled by default.
+The page shows the canonical MCP endpoint, server version, authentication setup status, and connection instructions. It is disabled by default.
 
-The dashboard is public when enabled. It deliberately excludes tokens, sessions,
-account names, container data, and other GTM content. It reports server
-configuration only and does not verify the visitor's Google session.
+The dashboard is public when enabled. It deliberately excludes tokens, sessions, account names, container data, and other GTM content. It reports server configuration only and does not verify the visitor's Google session.
 
 ## Releases and deployment
 
-`server.json` is the source of truth for the runtime version. It is embedded in
-the Go binary and returned by `/health`; there is no second version constant in
-Go code.
+`server.json` is the source of truth for the runtime version. It is embedded in the Go binary and returned by `/health`; there is no second version constant in Go code.
 
 To publish a release:
 
@@ -540,8 +526,7 @@ To publish a release:
 3. Push a matching tag such as `v1.11.0`.
 
 The release workflow rejects a tag that does not match `server.json`, creates
-cross-platform archives with GoReleaser, and then deploys the tagged source to
-the production VPS. The deployment uses the GitHub environment
+cross-platform archives with GoReleaser, and then deploys the tagged source to the production VPS. The deployment uses the GitHub environment
 `auto-deployment` and expects these secrets:
 
 - `SSH_PRIVATE_KEY`
@@ -549,13 +534,9 @@ the production VPS. The deployment uses the GitHub environment
 - `VPS_HOST`
 - `VPS_USER`
 
-The workflow preserves server-only `.env`, `docker-compose.yml`, and token data,
-keeps a rollback image, rebuilds the service, and waits until `/health` reports
-the expected version.
+The workflow preserves server-only `.env`, `docker-compose.yml`, and token data, keeps a rollback image, rebuilds the service, and waits until `/health`reports the expected version.
 
-Recent commits on `main` can be newer than the latest tagged release. Check the
-[release page](https://github.com/paolobietolini/gtm-mcp-server/releases) when you need a
-reproducible published artifact.
+Recent commits on `main` can be newer than the latest tagged release. Check the [release page](https://github.com/paolobietolini/gtm-mcp-server/releases) when you need a reproducible published artifact.
 
 ## Development
 
@@ -582,16 +563,6 @@ authentication internals, token persistence, and security invariants.
 
 For a deep dive into the Google Tag Manager MCP server, read the [Deep Wiki](https://deepwiki.com/paolobietolini/gtm-mcp-server).
 
-
-## Current limitations
-
-- The 101-method GTM v2 API parity target is complete. The five account
-  user-permission methods remain outside the product scope.
-- The server supports Streamable HTTP only. Stdio transport is planned but is
-  not implemented.
-- The hosted service processes OAuth tokens. Self-host the server when your
-  policy requires control of the runtime and token store.
-- Some GTM resource families depend on container type or account entitlement.
 
 ## Additional context
 
