@@ -6,6 +6,12 @@
 [![Security Checks](https://github.com/paolobietolini/gtm-mcp-server/actions/workflows/security.yml/badge.svg)](https://github.com/paolobietolini/gtm-mcp-server/actions/workflows/security.yml)
 [![GitHub release](https://img.shields.io/github/v/release/paolobietolini/gtm-mcp-server)](https://github.com/paolobietolini/gtm-mcp-server/releases)
 
+---
+> [!IMPORTANT]  
+> The hosted instance at https://mcp.gtmeditor.com will be shut-down on 2026-11-30. See [#139](https://github.com/paolobietolini/gtm-mcp-server/issues/139) for more details.
+> Thanks fir using the hosted instance.
+
+---
 GTM MCP Server connects MCP clients to the Google Tag Manager API. It can
 inspect containers, create and update workspace entities, create versions, and
 publish a selected version after explicit confirmation.
@@ -16,8 +22,6 @@ Use the hosted server at:
 https://mcp.gtmeditor.com
 ```
 
-> [!NOTE]  
-> The hosted instance at https://mcp.gtmeditor.com will be shut-down on 2026-11-30. See [#139](https://github.com/paolobietolini/gtm-mcp-server/issues/139) for more details.
 
 The server supports browser-based Google OAuth for individual users and
 service-account authentication for self-hosted automation.
