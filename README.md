@@ -35,7 +35,6 @@ service-account authentication for self-hosted automation.
 | MCP resources | 8 resource definitions |
 | MCP prompts | 6 prompts |
 | Official GTM API coverage | 101 of 106 methods |
-| Product parity target | 101 of 106 methods, reached |
 | Hosted endpoint | `https://mcp.gtmeditor.com` |
 
 The project implements 101 methods from Google's 106-method GTM v2 discovery surface. The five `accounts.user_permissions` methods are intentionally excluded because granting and revoking GTM access are security-related and it shouldn't be manager by an LLM.
