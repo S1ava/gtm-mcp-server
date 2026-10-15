@@ -8,7 +8,7 @@
 
 ---
 > [!IMPORTANT]  
-> The hosted instance at https://mcp.gtmeditor.com will be shut down on November 30, 2026. See #139 for details. Thanks to everyone who used it!
+> The hosted instance at https://mcp.gtmeditor.com will be shut down on November 30, 2026. See [#139](https://github.com/paolobietolini/gtm-mcp-server/issues/139) for details. Thanks to everyone who used it!
 
 ---
 GTM MCP Server connects MCP clients to the Google Tag Manager API. It can
